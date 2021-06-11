@@ -23,7 +23,7 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties({RemotingClientProperties.class})
 @ConditionalOnClass(RemotingClient.class)
-public class RemotingClientAutoConfiguration {
+public class RemotingClientAutoConfiguration extends AbstractRemotingAutoConfiguration{
 
     @Autowired(required = false)
     private List<RequestProcessor> requestProcessors = Collections.emptyList();
@@ -33,13 +33,9 @@ public class RemotingClientAutoConfiguration {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public RemotingClient remotingClient(RemotingClientProperties properties) {
         RemotingClient remotingClient = RemotingBootstrapFactory.createRemotingClient(properties);
-        requestProcessors.forEach(requestProcessor -> {
-            RemotingRequestProcessor annotation = requestProcessor.getClass().getAnnotation(RemotingRequestProcessor.class);
-            if (annotation != null && annotation.type() != RemotingType.SERVER) {
-                LOG.info("RemotingClient registerRequestProcessor code : {}, class : {}", annotation.code(), requestProcessor.getClass().getName());
-                remotingClient.registerRequestProcessor(annotation.code(), requestProcessor);
-            }
-        });
+        registerInterceptor(remotingClient, RemotingType.SERVER);
+        registerRequestProcessor(remotingClient, RemotingType.SERVER);
+        registerChannelEventListener(remotingClient, RemotingType.SERVER);
         return remotingClient;
     }
 

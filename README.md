@@ -63,6 +63,7 @@ public class Bootstrap {
             return null;
         }
     }
+
     @RemotingRequestProcessor(code = 13, type = RemotingType.SERVER)
     class RequestProcessorImpl2 implements RequestProcessor {
         @Override
@@ -71,12 +72,51 @@ public class Bootstrap {
             return null;
         }
     }
-    @RemotingRequestProcessor(code = 14, type = RemotingType.BOTH)
+
+    @RemotingRequestProcessor(code = 14)
     class RequestProcessorImpl3 implements RequestProcessor {
         @Override
         public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
             System.out.println(request);
             return null;
+        }
+    }
+
+    @RemotingInterceptor
+    class InterceptorImpl implements Interceptor {
+
+        @Override
+        public void beforeRequest(RequestContext context) {
+            System.out.println(context);
+        }
+
+        @Override
+        public void afterResponseReceived(ResponseContext context) {
+            System.out.println(context);
+        }
+    }
+
+    @RemotingChannelEventListener
+    class ChannelEventListenerImpl implements ChannelEventListener {
+
+        @Override
+        public void onChannelConnect(RemotingChannel channel) {
+            System.out.println("onChannelConnect");
+        }
+
+        @Override
+        public void onChannelClose(RemotingChannel channel) {
+            System.out.println("onChannelClose");
+        }
+
+        @Override
+        public void onChannelException(RemotingChannel channel, Throwable cause) {
+            System.out.println("onChannelException");
+        }
+
+        @Override
+        public void onChannelIdle(RemotingChannel channel) {
+            System.out.println("onChannelIdle");
         }
     }
 }
