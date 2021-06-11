@@ -28,13 +28,11 @@
 ```properties
 # RemotingServerProperties or RemotingClientProperties
 netty.remoting.server.serverListenPort=9888
-
+server.shutdown=graceful
 ```
 
 ```java
-// enable remoting client
 @EnableRemotingClientAutoConfiguration
-// enable remoting server
 @EnableRemotingServerAutoConfiguration
 @SpringBootApplication
 public class Bootstrap {
@@ -52,12 +50,37 @@ public class Bootstrap {
 
     @PostConstruct
     public void start() {
-        remotingClient.invokeOneWay("127.0.0.1:9888", factory.createRequest());
+        RemotingCommand request = factory.createRequest();
+        request.cmdCode((short) 13);
+        remotingClient.invokeOneWay("127.0.0.1:9888", request);
+    }
+
+    @RemotingRequestProcessor(code = 12, type = RemotingType.CLIENT)
+    class RequestProcessorImpl1 implements RequestProcessor {
+        @Override
+        public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
+            System.out.println(request);
+            return null;
+        }
+    }
+    @RemotingRequestProcessor(code = 13, type = RemotingType.SERVER)
+    class RequestProcessorImpl2 implements RequestProcessor {
+        @Override
+        public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
+            System.out.println(request);
+            return null;
+        }
+    }
+    @RemotingRequestProcessor(code = 14, type = RemotingType.BOTH)
+    class RequestProcessorImpl3 implements RequestProcessor {
+        @Override
+        public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
+            System.out.println(request);
+            return null;
+        }
     }
 }
 ```
-
-### RemotingClient
 
 ## License
 
