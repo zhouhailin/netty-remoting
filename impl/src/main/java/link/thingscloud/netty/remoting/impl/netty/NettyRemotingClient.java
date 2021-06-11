@@ -166,9 +166,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
     }
 
     @Override
-    public void invokeAsync(final String address, final RemotingCommand request, final AsyncHandler asyncHandler,
-        final long timeoutMillis) {
-
+    public void invokeAsync(final String address, final RemotingCommand request, final AsyncHandler asyncHandler, final long timeoutMillis) {
         final Channel channel = this.clientChannelManager.createIfAbsent(address);
         if (channel != null && channel.isActive()) {
             this.invokeAsyncWithInterceptor(channel, request, asyncHandler, timeoutMillis);
@@ -194,34 +192,25 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
     private class ClientConnectionHandler extends ChannelDuplexHandler {
 
         @Override
-        public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress,
-            ChannelPromise promise)
-            throws Exception {
+        public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
             LOG.info("Connected from {} to {}.", localAddress, remoteAddress);
             super.connect(ctx, remoteAddress, localAddress, promise);
-
             putNettyEvent(new NettyChannelEvent(NettyChannelEventType.CONNECT, ctx.channel()));
         }
 
         @Override
         public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
             LOG.info("Remote address {} disconnect channel {}.", ctx.channel().remoteAddress(), ctx.channel());
-
             NettyRemotingClient.this.clientChannelManager.closeChannel(ctx.channel());
-
             super.disconnect(ctx, promise);
-
             putNettyEvent(new NettyChannelEvent(NettyChannelEventType.CLOSE, ctx.channel()));
         }
 
         @Override
         public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
             LOG.info("Remote address {} close channel {}.", ctx.channel().remoteAddress(), ctx.channel());
-
             NettyRemotingClient.this.clientChannelManager.closeChannel(ctx.channel());
-
             super.close(ctx, promise);
-
             putNettyEvent(new NettyChannelEvent(NettyChannelEventType.CLOSE, ctx.channel()));
         }
 
@@ -235,7 +224,6 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
                     putNettyEvent(new NettyChannelEvent(NettyChannelEventType.IDLE, ctx.channel()));
                 }
             }
-
             ctx.fireUserEventTriggered(evt);
         }
 

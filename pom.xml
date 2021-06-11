@@ -6,7 +6,7 @@
 
     <groupId>link.thingscloud</groupId>
     <artifactId>netty-remoting</artifactId>
-    <version>0.4.0-RELEASE</version>
+    <version>0.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}-${project.version}</name>
@@ -25,12 +25,14 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <netty.version>4.1.65.Final</netty.version>
+        <spring-boot.version>2.5.0</spring-boot.version>
     </properties>
 
     <modules>
         <module>api</module>
         <module>impl</module>
         <module>benchmark</module>
+        <module>starter</module>
     </modules>
 
     <dependencies>
@@ -74,6 +76,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>netty-remoting-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>netty-remoting-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
@@ -124,6 +131,13 @@
                 <artifactId>msgpack</artifactId>
                 <version>0.6.12</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -131,7 +145,7 @@
         <url>https://github.com/zhouhailin/netty-remoting</url>
         <connection>scm:git:https://github.com/zhouhailin/netty-remoting.git</connection>
         <developerConnection>scm:git:https://github.com/zhouhailin/netty-remoting.git</developerConnection>
-        <tag>0.4.0-RELEASE</tag>
+        <tag>0.5.0-SNAPSHOT</tag>
     </scm>
 
     <licenses>
