@@ -1,5 +1,6 @@
 package link.thingscloud.netty.benchmarks.remoting;
 
+import link.thingscloud.netty.remoting.api.AsyncHandler;
 import link.thingscloud.netty.remoting.api.RemotingClient;
 import link.thingscloud.netty.remoting.api.RemotingServer;
 import link.thingscloud.netty.remoting.api.RequestProcessor;
@@ -16,6 +17,8 @@ import link.thingscloud.netty.remoting.spring.boot.starter.annotation.RemotingCh
 import link.thingscloud.netty.remoting.spring.boot.starter.annotation.RemotingInterceptor;
 import link.thingscloud.netty.remoting.spring.boot.starter.annotation.RemotingRequestProcessor;
 import link.thingscloud.netty.remoting.spring.boot.starter.annotation.RemotingType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,6 +33,8 @@ import javax.annotation.PostConstruct;
 @EnableRemotingServerAutoConfiguration
 @SpringBootApplication
 public class Bootstrap {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
 
     public static void main(String[] args) {
         SpringApplication.run(Bootstrap.class, args);
@@ -47,14 +52,29 @@ public class Bootstrap {
         RemotingCommand request = factory.createRequest();
         request.cmdCode((short) 13);
         remotingClient.invokeOneWay("127.0.0.1:9888", request);
+        remotingClient.invokeAsync("127.0.0.1:9888", request, new AsyncHandler() {
+            @Override
+            public void onFailure(RemotingCommand request, Throwable cause) {
+                LOG.info("invokeAsync onFailure : {}, cause : ", request, cause);
+            }
+
+            @Override
+            public void onSuccess(RemotingCommand response) {
+                LOG.info("invokeAsync onSuccess : {}", response);
+
+            }
+        }, 1000);
+        RemotingCommand response = remotingClient.invoke("127.0.0.1:9888", request, 100);
+        LOG.info("invoke response : {}", response);
+
     }
 
     @RemotingRequestProcessor(code = 12, type = RemotingType.CLIENT)
     class RequestProcessorImpl1 implements RequestProcessor {
         @Override
         public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
-            System.out.println(request);
-            return null;
+            LOG.info("processRequest : {}", request);
+            return factory.createResponse(request);
         }
     }
 
@@ -62,8 +82,8 @@ public class Bootstrap {
     class RequestProcessorImpl2 implements RequestProcessor {
         @Override
         public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
-            System.out.println(request);
-            return null;
+            LOG.info("processRequest : {}", request);
+            return factory.createResponse(request);
         }
     }
 
@@ -71,8 +91,8 @@ public class Bootstrap {
     class RequestProcessorImpl3 implements RequestProcessor {
         @Override
         public RemotingCommand processRequest(RemotingChannel channel, RemotingCommand request) {
-            System.out.println(request);
-            return null;
+            LOG.info("processRequest : {}", request);
+            return factory.createResponse(request);
         }
     }
 
@@ -81,12 +101,12 @@ public class Bootstrap {
 
         @Override
         public void beforeRequest(RequestContext context) {
-            System.out.println(context);
+            LOG.info("beforeRequest : {}", context);
         }
 
         @Override
         public void afterResponseReceived(ResponseContext context) {
-            System.out.println(context);
+            LOG.info("afterResponseReceived : {}", context);
         }
     }
 
@@ -95,22 +115,22 @@ public class Bootstrap {
 
         @Override
         public void onChannelConnect(RemotingChannel channel) {
-            System.out.println("onChannelConnect");
+            LOG.info("onChannelConnect : {}", channel);
         }
 
         @Override
         public void onChannelClose(RemotingChannel channel) {
-            System.out.println("onChannelClose");
+            LOG.info("onChannelClose : {}", channel);
         }
 
         @Override
         public void onChannelException(RemotingChannel channel, Throwable cause) {
-            System.out.println("onChannelException");
+            LOG.error("onChannelException : {}", channel, cause);
         }
 
         @Override
         public void onChannelIdle(RemotingChannel channel) {
-            System.out.println("onChannelIdle");
+            LOG.info("onChannelIdle : {}", channel);
         }
     }
 }
