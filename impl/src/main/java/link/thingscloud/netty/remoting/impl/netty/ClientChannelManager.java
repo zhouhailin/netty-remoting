@@ -138,7 +138,7 @@ public class ClientChannelManager {
                     LOG.info("Begin to close the remote address {} channel {}", addrRemote, prevCW);
 
                     if (prevCW.getChannel() != channel) {
-                        LOG.info("Channel {} has been closed,this is a new channel.", prevCW.getChannel(), channel);
+                        LOG.info("Channel {} has been closed,this is a new channel {}", prevCW.getChannel(), channel);
                         removeItemFromTable = false;
                     }
 
