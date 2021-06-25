@@ -448,7 +448,7 @@ public abstract class NettyRemotingAbstract implements RemotingService {
                         }
 
                         requestFail(requestID, new RemotingAccessException(RemotingUtil.extractRemoteAddress(channel), f.cause()));
-                        LOG.warn("Send request command to channel  failed.", remoteAddr);
+                        LOG.warn("Send request command to channel {} failed.", remoteAddr);
                     }
                 };
 
@@ -506,7 +506,7 @@ public abstract class NettyRemotingAbstract implements RemotingService {
 
     @Override
     public void registerRequestProcessor(short requestCode, RequestProcessor processor, ExecutorService executor) {
-        Pair<RequestProcessor, ExecutorService> pair = new Pair<RequestProcessor, ExecutorService>(processor, executor);
+        Pair<RequestProcessor, ExecutorService> pair = new Pair<>(processor, executor);
         if (!this.processorTables.containsKey(requestCode)) {
             this.processorTables.put(requestCode, pair);
         }

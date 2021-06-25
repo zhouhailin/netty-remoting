@@ -87,7 +87,7 @@ public class ClientChannelManager {
 
                     if (createNewConnection) {
                         String[] s = addr.split(":");
-                        SocketAddress socketAddress = new InetSocketAddress(s[0], Integer.valueOf(s[1]));
+                        SocketAddress socketAddress = new InetSocketAddress(s[0], Integer.parseInt(s[1]));
                         ChannelFuture channelFuture = this.clientBootstrap.connect(socketAddress);
                         LOG.info("createChannel: begin to connect remote host[{}] asynchronously", addr);
                         cw = new RemotingChannelFuture(channelFuture);
@@ -124,18 +124,18 @@ public class ClientChannelManager {
     }
 
     void closeChannel(final String addr, final Channel channel) {
-        final String addrRemote = null == addr ? extractRemoteAddress(channel) : addr;
+        final String remoteAddr = null == addr ? extractRemoteAddress(channel) : addr;
         try {
             if (this.lockChannelTables.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
                 try {
                     boolean removeItemFromTable = true;
-                    RemotingChannelFuture prevCW = this.channelTables.get(addrRemote);
+                    RemotingChannelFuture prevCW = this.channelTables.get(remoteAddr);
                     //Workaround for null
                     if (null == prevCW) {
                         return;
                     }
 
-                    LOG.info("Begin to close the remote address {} channel {}", addrRemote, prevCW);
+                    LOG.info("Begin to close the remote address {} channel {}", remoteAddr, prevCW);
 
                     if (prevCW.getChannel() != channel) {
                         LOG.info("Channel {} has been closed,this is a new channel {}", prevCW.getChannel(), channel);
@@ -143,8 +143,8 @@ public class ClientChannelManager {
                     }
 
                     if (removeItemFromTable) {
-                        this.channelTables.remove(addrRemote);
-                        LOG.info("Channel {} has been removed !", addrRemote);
+                        this.channelTables.remove(remoteAddr);
+                        LOG.info("Channel {} has been removed !", remoteAddr);
                     }
 
                     channel.close().addListener(new ChannelFutureListener() {
@@ -172,27 +172,27 @@ public class ClientChannelManager {
                 try {
                     boolean removeItemFromTable = true;
                     RemotingChannelFuture prevCW = null;
-                    String addrRemote = null;
+                    String remoteAddr = null;
 
                     for (Map.Entry<String, RemotingChannelFuture> entry : channelTables.entrySet()) {
                         RemotingChannelFuture prev = entry.getValue();
                         if (prev.getChannel() != null) {
                             if (prev.getChannel() == channel) {
                                 prevCW = prev;
-                                addrRemote = entry.getKey();
+                                remoteAddr = entry.getKey();
                                 break;
                             }
                         }
                     }
 
                     if (null == prevCW) {
-                        LOG.info("eventCloseChannel: the channel[{}] has been removed from the channel table before", addrRemote);
+                        LOG.info("eventCloseChannel: the channel[{}] has been removed from the channel table before", remoteAddr);
                         removeItemFromTable = false;
                     }
 
                     if (removeItemFromTable) {
-                        this.channelTables.remove(addrRemote);
-                        LOG.info("closeChannel: the channel[{}] was removed from channel table", addrRemote);
+                        this.channelTables.remove(remoteAddr);
+                        LOG.info("closeChannel: the channel[{}] was removed from channel table", remoteAddr);
                         //RemotingHelper.closeChannel(channel);
                     }
                 } catch (Exception e) {
