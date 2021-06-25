@@ -17,13 +17,14 @@
 
 package link.thingscloud.netty.remoting.impl.command;
 
-import java.nio.charset.Charset;
-import java.util.Map.Entry;
-
 import link.thingscloud.netty.remoting.api.buffer.RemotingBuffer;
 import link.thingscloud.netty.remoting.api.command.RemotingCommand;
 import link.thingscloud.netty.remoting.api.command.TrafficType;
 import link.thingscloud.netty.remoting.api.exception.RemotingCodecException;
+import link.thingscloud.netty.remoting.internal.KryoUtils;
+
+import java.nio.charset.Charset;
+import java.util.Map.Entry;
 
 public class CodecHelper {
     // ProtocolMagic(1) + TotalLength(4) + CmdCode(2) + CmdVersion(2) + RequestID(4) + TrafficType(1) + OpCode(2)
@@ -85,9 +86,9 @@ public class CodecHelper {
         }
 
         int totalLength = MIN_PROTOCOL_LEN
-            + remarkLen
-            + propsLen
-            + payloadLen;
+                + remarkLen
+                + propsLen
+                + payloadLen;
 
         out.writeInt(totalLength);
         out.writeShort(command.cmdCode());
@@ -173,4 +174,21 @@ public class CodecHelper {
 
         return cmd;
     }
+
+    public static byte[] encodePayload(Object object) {
+        return KryoUtils.encode(object);
+    }
+
+    public static byte[] encodePayload(Object object, Class<?>... classes) {
+        return KryoUtils.encode(object, classes);
+    }
+
+    public static <T> T decodePayload(byte[] buffer, Class<T> type) {
+        return KryoUtils.decode(buffer, type);
+    }
+
+    public static <T> T decodePayload(byte[] buffer, Class<T> type, Class<?>... classes) {
+        return KryoUtils.decode(buffer, type, classes);
+    }
+
 }
