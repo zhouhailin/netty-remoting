@@ -23,7 +23,7 @@
 
     <groupId>link.thingscloud</groupId>
     <artifactId>netty-remoting</artifactId>
-    <version>0.7.0-RELEASE</version>
+    <version>0.8.0-SHAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}-${project.version}</name>
@@ -41,15 +41,15 @@
         <!-- Compiler settings properties -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <netty.version>4.1.65.Final</netty.version>
-        <spring-boot.version>2.5.0</spring-boot.version>
+        <netty.version>4.1.97.Final</netty.version>
+        <spring-boot.version>2.7.16</spring-boot.version>
     </properties>
 
     <modules>
-        <module>api</module>
-        <module>impl</module>
-        <module>benchmark</module>
-        <module>starter</module>
+        <module>netty-remoting-api</module>
+        <module>netty-remoting-impl</module>
+        <module>netty-remoting-benchmark</module>
+        <module>netty-remoting-spring-boot-starter</module>
     </modules>
 
     <dependencies>
@@ -57,28 +57,24 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.19.0</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.11.0</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -110,25 +106,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.76</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
+                <version>1.2.83</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
             <dependency>
@@ -162,7 +140,7 @@
         <url>https://github.com/zhouhailin/netty-remoting</url>
         <connection>scm:git:https://github.com/zhouhailin/netty-remoting.git</connection>
         <developerConnection>scm:git:https://github.com/zhouhailin/netty-remoting.git</developerConnection>
-        <tag>0.7.0-RELEASE</tag>
+        <tag>0.8.0-SHAPSHOT</tag>
     </scm>
 
     <licenses>
