@@ -21,7 +21,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import link.thingscloud.netty.remoting.api.buffer.RemotingBuffer;
 import link.thingscloud.netty.remoting.api.command.RemotingCommand;
 import link.thingscloud.netty.remoting.api.exception.RemotingCodecException;
@@ -36,13 +39,45 @@ import java.util.List;
  * @author zhouhailin
  * @since 0.5.0
  */
-public class Decoder extends ByteToMessageDecoder {
-    private static final Logger LOG = LoggerFactory.getLogger(Decoder.class);
+public class BinaryWebSocketFrameDecoder extends MessageToMessageDecoder<WebSocketFrame> {
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryWebSocketFrameDecoder.class);
 
-    public Decoder() {
+    public BinaryWebSocketFrameDecoder() {
     }
 
     @Override
+    protected void decode(final ChannelHandlerContext ctx, WebSocketFrame frame, List<Object> out) throws Exception {
+        try {
+            // ping and pong frames already handled
+            if (frame instanceof TextWebSocketFrame) {
+                System.out.println("--------------");
+                System.out.println(((TextWebSocketFrame) frame).text());
+            } else if (frame instanceof BinaryWebSocketFrame) {
+                // Send the uppercase string back.
+                System.out.println(frame.content().toString());
+                decode(ctx, frame.content(), out);
+            } else {
+                final String message = "unsupported frame type: " + frame.getClass().getName();
+                LOG.warn("Decode error {}, close the channel {}", message, ctx.channel());
+                ctx.channel().close().addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        LOG.warn("Close channel {} because of error {}, result is {}", ctx.channel(), message, future.isSuccess());
+                    }
+                });
+            }
+        } catch (final RemotingCodecException e) {
+            LOG.warn("Decode error {}, close the channel {}", e.getMessage(), ctx.channel());
+            ctx.channel().close().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    LOG.warn("Close channel {} because of error {}, result is {}", ctx.channel(), e, future.isSuccess());
+                }
+            });
+        }
+    }
+
+
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (!in.isReadable()) {
             return;
@@ -100,4 +135,5 @@ public class Decoder extends ByteToMessageDecoder {
         }
         return CodecHelper.decode(wrapper);
     }
+
 }

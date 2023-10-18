@@ -17,7 +17,9 @@
 
 package link.thingscloud.netty.remoting.impl.command;
 
+import link.thingscloud.netty.remoting.api.command.LanguageCode;
 import link.thingscloud.netty.remoting.api.command.RemotingCommand;
+import link.thingscloud.netty.remoting.api.command.SerializableType;
 import link.thingscloud.netty.remoting.api.command.TrafficType;
 import org.apache.commons.lang3.builder.*;
 
@@ -34,14 +36,16 @@ public class RemotingCommandImpl implements RemotingCommand {
     public final static RequestIdGenerator REQUEST_ID_GENERATOR = RequestIdGenerator.inst;
 
     private short cmdCode;
+    private LanguageCode language = LanguageCode.JAVA;
     private short cmdVersion;
     private volatile int requestId = REQUEST_ID_GENERATOR.incrementAndGet();
     private TrafficType trafficType = TrafficType.REQUEST_SYNC;
+    private SerializableType serializableType = SerializableType.JSON;
     private short opCode = RemotingSysResponseCode.SUCCESS;
     private String remark = "";
 
     @ToStringExclude
-    private Map<String, String> properties = new HashMap<>();
+    private final Map<String, String> properties = new HashMap<>(16);
 
     @ToStringExclude
     private byte[] payload;
@@ -57,6 +61,16 @@ public class RemotingCommandImpl implements RemotingCommand {
     @Override
     public void cmdCode(short code) {
         this.cmdCode = code;
+    }
+
+    @Override
+    public LanguageCode language() {
+        return this.language;
+    }
+
+    @Override
+    public void language(LanguageCode language) {
+        this.language = language;
     }
 
     @Override
@@ -87,6 +101,16 @@ public class RemotingCommandImpl implements RemotingCommand {
     @Override
     public void trafficType(TrafficType value) {
         this.trafficType = value;
+    }
+
+    @Override
+    public SerializableType serializableType() {
+        return serializableType;
+    }
+
+    @Override
+    public void serializableType(SerializableType value) {
+        this.serializableType = value;
     }
 
     @Override

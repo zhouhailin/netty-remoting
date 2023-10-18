@@ -17,52 +17,26 @@
 
 package link.thingscloud.netty.remoting.api.command;
 
-import java.util.Map;
-
 /**
  * @author zhouhailin
- * @since 0.5.0
+ * @since 0.8.0
  */
-public interface RemotingCommand {
-    short cmdCode();
+public enum LanguageCode {
+    JAVA,
+    JAVASCRIPT,
+    GO;
 
-    void cmdCode(short code);
+    public static LanguageCode parse(int index) {
+        switch (index) {
+            case 0:
+                return JAVA;
+            case 1:
+                return JAVASCRIPT;
+            case 2:
+                return GO;
+            default:
+                throw new IllegalArgumentException("LanguageCode " + index + " is not supported");
+        }
+    }
 
-    LanguageCode language();
-
-    void language(LanguageCode language);
-
-    short cmdVersion();
-
-    void cmdVersion(short version);
-
-    int requestID();
-
-    void requestID(int value);
-
-    TrafficType trafficType();
-
-    void trafficType(TrafficType value);
-
-    SerializableType serializableType();
-
-    void serializableType(SerializableType value);
-
-    short opCode();
-
-    void opCode(short value);
-
-    String remark();
-
-    void remark(String value);
-
-    Map<String, String> properties();
-
-    String property(String key);
-
-    void property(String key, String value);
-
-    byte[] payload();
-
-    void payload(byte[] payload);
 }

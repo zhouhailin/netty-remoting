@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
  */
 public class ResponseFutureTest extends BaseTest {
     private ResponseFuture future;
-    private RemotingCommandFactoryImpl factory = new RemotingCommandFactoryImpl();
+    private final RemotingCommandFactoryImpl factory = new RemotingCommandFactoryImpl();
 
     @Test
     public void executeAsyncHandler_Success() {

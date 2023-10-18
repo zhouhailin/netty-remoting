@@ -162,9 +162,9 @@ public class BaseTest {
 
     protected class ObjectFuture<T> {
         volatile private T object;
-        private Semaphore semaphore;
-        private int permits;
-        private int timeoutMillis;
+        private final Semaphore semaphore;
+        private final int permits;
+        private final int timeoutMillis;
 
         public ObjectFuture(int permits, int timeoutMillis) {
             semaphore = new Semaphore(0);

@@ -15,54 +15,34 @@
  * limitations under the License.
  */
 
-package link.thingscloud.netty.remoting.api.command;
+package link.thingscloud.netty.remoting.impl.command;
 
-import java.util.Map;
+import junit.framework.TestCase;
+import link.thingscloud.netty.remoting.api.command.SerializableType;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author zhouhailin
- * @since 0.5.0
+ * @since 0.8.0
  */
-public interface RemotingCommand {
-    short cmdCode();
+public class SerializableHelperTest extends TestCase {
 
-    void cmdCode(short code);
 
-    LanguageCode language();
+    @Data
+    @Accessors(chain = true)
+    class Person {
+        private String name;
+        private int age;
+    }
 
-    void language(LanguageCode language);
+    public void testSerialize() {
+        Person person = new Person();
+        person.setAge(10).setName("zhouhailin");
+        byte[] serialize = SerializableHelper.serialize(SerializableType.JSON, person);
+        System.out.println(new String(serialize));
+    }
 
-    short cmdVersion();
-
-    void cmdVersion(short version);
-
-    int requestID();
-
-    void requestID(int value);
-
-    TrafficType trafficType();
-
-    void trafficType(TrafficType value);
-
-    SerializableType serializableType();
-
-    void serializableType(SerializableType value);
-
-    short opCode();
-
-    void opCode(short value);
-
-    String remark();
-
-    void remark(String value);
-
-    Map<String, String> properties();
-
-    String property(String key);
-
-    void property(String key, String value);
-
-    byte[] payload();
-
-    void payload(byte[] payload);
+    public void testDeserialize() {
+    }
 }

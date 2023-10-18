@@ -53,6 +53,11 @@
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -125,6 +130,18 @@
                 <groupId>org.msgpack</groupId>
                 <artifactId>msgpack</artifactId>
                 <version>0.6.12</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alipay.sofa/hessian -->
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>hessian</artifactId>
+                <version>4.0.4</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.furyio/fury-core -->
+            <dependency>
+                <groupId>org.furyio</groupId>
+                <artifactId>fury-core</artifactId>
+                <version>0.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>

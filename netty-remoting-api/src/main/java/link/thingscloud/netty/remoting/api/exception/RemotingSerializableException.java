@@ -15,54 +15,20 @@
  * limitations under the License.
  */
 
-package link.thingscloud.netty.remoting.api.command;
-
-import java.util.Map;
+package link.thingscloud.netty.remoting.api.exception;
 
 /**
  * @author zhouhailin
- * @since 0.5.0
+ * @since 0.8.0
  */
-public interface RemotingCommand {
-    short cmdCode();
+public class RemotingSerializableException extends RemotingAccessException {
+    private static final long serialVersionUID = -7597014042746200543L;
 
-    void cmdCode(short code);
+    public RemotingSerializableException(String msg) {
+        super(msg);
+    }
 
-    LanguageCode language();
-
-    void language(LanguageCode language);
-
-    short cmdVersion();
-
-    void cmdVersion(short version);
-
-    int requestID();
-
-    void requestID(int value);
-
-    TrafficType trafficType();
-
-    void trafficType(TrafficType value);
-
-    SerializableType serializableType();
-
-    void serializableType(SerializableType value);
-
-    short opCode();
-
-    void opCode(short value);
-
-    String remark();
-
-    void remark(String value);
-
-    Map<String, String> properties();
-
-    String property(String key);
-
-    void property(String key, String value);
-
-    byte[] payload();
-
-    void payload(byte[] payload);
+    public RemotingSerializableException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 }

@@ -17,52 +17,32 @@
 
 package link.thingscloud.netty.remoting.api.command;
 
-import java.util.Map;
-
 /**
  * @author zhouhailin
- * @since 0.5.0
+ * @since 0.8.0
  */
-public interface RemotingCommand {
-    short cmdCode();
+public enum SerializableType {
+    JSON,
+    Kryo,
+    Fury,
+    Hessian,
+    Jdk;
 
-    void cmdCode(short code);
+    public static SerializableType parse(int index) {
+        switch (index) {
+            case 0:
+                return JSON;
+            case 1:
+                return Kryo;
+            case 2:
+                return Fury;
+            case 3:
+                return Hessian;
+            case 4:
+                return Jdk;
+            default:
+                throw new IllegalArgumentException("SerializableType " + index + " is not supported");
+        }
+    }
 
-    LanguageCode language();
-
-    void language(LanguageCode language);
-
-    short cmdVersion();
-
-    void cmdVersion(short version);
-
-    int requestID();
-
-    void requestID(int value);
-
-    TrafficType trafficType();
-
-    void trafficType(TrafficType value);
-
-    SerializableType serializableType();
-
-    void serializableType(SerializableType value);
-
-    short opCode();
-
-    void opCode(short value);
-
-    String remark();
-
-    void remark(String value);
-
-    Map<String, String> properties();
-
-    String property(String key);
-
-    void property(String key, String value);
-
-    byte[] payload();
-
-    void payload(byte[] payload);
 }

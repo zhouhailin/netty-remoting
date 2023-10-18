@@ -45,7 +45,7 @@ public class NettyRemotingConnectionTest extends BaseTest {
     private static RemotingServer remotingServer;
     private static RemotingClient remotingClient;
 
-    private static short requestCode = 123;
+    private static final short requestCode = 123;
     private RemotingCommand request;
 
     private static String remoteAddr;

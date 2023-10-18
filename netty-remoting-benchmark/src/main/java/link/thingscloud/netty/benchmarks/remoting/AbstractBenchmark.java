@@ -26,6 +26,8 @@ import link.thingscloud.netty.remoting.config.RemotingServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @author zhouhailin
  * @since 0.5.0
@@ -52,6 +54,8 @@ public class AbstractBenchmark {
         request.cmdVersion((short) 1);
         request.payload("hello".getBytes());
         RemotingCommand response = client.invoke("127.0.0.1:8888", request, 3000);
+        System.out.println(request);
+        System.out.println(response);
         System.out.println(new String(response.payload()));
 
         client.stop();

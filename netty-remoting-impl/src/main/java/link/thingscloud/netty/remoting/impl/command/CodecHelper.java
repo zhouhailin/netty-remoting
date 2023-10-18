@@ -18,29 +18,33 @@
 package link.thingscloud.netty.remoting.impl.command;
 
 import link.thingscloud.netty.remoting.api.buffer.RemotingBuffer;
+import link.thingscloud.netty.remoting.api.command.LanguageCode;
 import link.thingscloud.netty.remoting.api.command.RemotingCommand;
+import link.thingscloud.netty.remoting.api.command.SerializableType;
 import link.thingscloud.netty.remoting.api.command.TrafficType;
 import link.thingscloud.netty.remoting.api.exception.RemotingCodecException;
 import link.thingscloud.netty.remoting.internal.KryoUtils;
 
 import java.nio.charset.Charset;
-import java.util.Map.Entry;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * @author zhouhailin
  * @since 0.5.0
  */
 public class CodecHelper {
-    // ProtocolMagic(1) + TotalLength(4) + CmdCode(2) + CmdVersion(2) + RequestID(4) + TrafficType(1) + OpCode(2)
+    // ProtocolMagic(1) + TotalLength(4) + CmdCode(2) + LanguageCode(1) + CmdVersion(2) + RequestID(4) + TrafficType(1) + SerializableType(1) + OpCode(2)
     // + RemarkLen(2) + PropertiesSize(2) + PayloadLen(4);
-    public final static int MIN_PROTOCOL_LEN = 1 + 4 + 2 + 2 + 4 + 1 + 2 + 2 + 2 + 4;
+    public final static int MIN_PROTOCOL_LEN = 1 + 4 + 2 + 1 + 2 + 4 + 1 + 1 + 2 + 2 + 2 + 4;
     public final static byte PROTOCOL_MAGIC = 0x14;
+    public final static byte PROTOCOL_MAGIC_G = 0x47;
     final static int REMARK_MAX_LEN = Short.MAX_VALUE;
     final static int PROPERTY_MAX_LEN = 524288; // 512KB
     final static int PAYLOAD_MAX_LEN = 16777216; // 16MB
     public final static int PACKET_MAX_LEN = MIN_PROTOCOL_LEN + REMARK_MAX_LEN + PROPERTY_MAX_LEN + PAYLOAD_MAX_LEN;
     private final static char PROPERTY_SEPARATOR = '\n';
-    private final static Charset REMOTING_CHARSET = Charset.forName("UTF-8");
+    private final static Charset REMOTING_CHARSET = StandardCharsets.UTF_8;
 
     public static void encodeCommand(final RemotingCommand command, final RemotingBuffer out) {
         out.writeByte(PROTOCOL_MAGIC);
@@ -61,7 +65,7 @@ public class CodecHelper {
         if (command.properties() != null && !command.properties().isEmpty()) {
             props = new byte[command.properties().size()][];
             int i = 0;
-            for (Entry<String, String> next : command.properties().entrySet()) {
+            for (Map.Entry<String, String> next : command.properties().entrySet()) {
                 sb.setLength(0);
                 sb.append(next.getKey());
                 sb.append(PROPERTY_SEPARATOR);
@@ -96,9 +100,11 @@ public class CodecHelper {
 
         out.writeInt(totalLength);
         out.writeShort(command.cmdCode());
+        out.writeByte((byte) command.language().ordinal());
         out.writeShort(command.cmdVersion());
         out.writeInt(command.requestID());
         out.writeByte((byte) command.trafficType().ordinal());
+        out.writeByte((byte) command.serializableType().ordinal());
         out.writeShort(command.opCode());
 
         out.writeShort(remarkLen);
@@ -126,9 +132,11 @@ public class CodecHelper {
         RemotingCommandImpl cmd = new RemotingCommandImpl();
 
         cmd.cmdCode(in.readShort());
+        cmd.language(LanguageCode.parse(in.readByte()));
         cmd.cmdVersion(in.readShort());
         cmd.requestID(in.readInt());
         cmd.trafficType(TrafficType.parse(in.readByte()));
+        cmd.serializableType(SerializableType.parse(in.readByte()));
         cmd.opCode(in.readShort());
 
         short remarkLen = in.readShort();

@@ -15,54 +15,28 @@
  * limitations under the License.
  */
 
-package link.thingscloud.netty.remoting.api.command;
+package link.thingscloud.netty.remoting.impl.netty;
 
-import java.util.Map;
+import junit.framework.TestCase;
+import link.thingscloud.netty.remoting.RemotingBootstrapFactory;
+import link.thingscloud.netty.remoting.config.RemotingServerConfig;
+import org.junit.Test;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author zhouhailin
- * @since 0.5.0
+ * @since 0.8.0
  */
-public interface RemotingCommand {
-    short cmdCode();
+public class NettyRemotingServerTest extends TestCase {
 
-    void cmdCode(short code);
+    @Test
+    public void testStart() throws InterruptedException {
+        NettyRemotingServer remotingServer = RemotingBootstrapFactory.createRemotingServer(new RemotingServerConfig());
+        remotingServer.start();
+        new CountDownLatch(1).await();
+    }
 
-    LanguageCode language();
-
-    void language(LanguageCode language);
-
-    short cmdVersion();
-
-    void cmdVersion(short version);
-
-    int requestID();
-
-    void requestID(int value);
-
-    TrafficType trafficType();
-
-    void trafficType(TrafficType value);
-
-    SerializableType serializableType();
-
-    void serializableType(SerializableType value);
-
-    short opCode();
-
-    void opCode(short value);
-
-    String remark();
-
-    void remark(String value);
-
-    Map<String, String> properties();
-
-    String property(String key);
-
-    void property(String key, String value);
-
-    byte[] payload();
-
-    void payload(byte[] payload);
+    public void testStop() {
+    }
 }

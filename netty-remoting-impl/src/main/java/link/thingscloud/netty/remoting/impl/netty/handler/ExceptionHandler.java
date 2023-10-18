@@ -36,7 +36,7 @@ public class ExceptionHandler extends ChannelDuplexHandler {
         ctx.channel().close().addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-                LOG.warn("Close channel {} because of error {},result is {}", ctx.channel(), cause, future.isSuccess());
+                LOG.warn("Close channel {} because of error {}, result is {}", ctx.channel(), cause, future.isSuccess());
             }
         });
     }

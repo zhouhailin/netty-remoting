@@ -78,8 +78,8 @@ public class NettyRemotingAbstractTest extends BaseTest {
 
     private RemotingCommand remotingRequestOneway;
 
-    private short requestCode = 123;
-    private int semaphoreNum = 5;
+    private final short requestCode = 123;
+    private final int semaphoreNum = 5;
 
     @Before
     public void setUp() {

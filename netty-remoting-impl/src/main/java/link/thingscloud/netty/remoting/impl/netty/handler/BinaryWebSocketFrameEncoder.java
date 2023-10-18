@@ -18,10 +18,12 @@
 package link.thingscloud.netty.remoting.impl.netty.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import link.thingscloud.netty.remoting.api.buffer.RemotingBuffer;
 import link.thingscloud.netty.remoting.api.command.RemotingCommand;
 import link.thingscloud.netty.remoting.api.exception.RemotingCodecException;
@@ -31,22 +33,27 @@ import link.thingscloud.netty.remoting.internal.RemotingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * @author zhouhailin
  * @since 0.5.0
  */
-public class Encoder extends MessageToByteEncoder<RemotingCommand> {
-    private static final Logger LOG = LoggerFactory.getLogger(Encoder.class);
+public class BinaryWebSocketFrameEncoder extends MessageToMessageEncoder<RemotingCommand> {
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryWebSocketFrameEncoder.class);
 
-    public Encoder() {
+    public BinaryWebSocketFrameEncoder() {
     }
 
     @Override
-    public void encode(final ChannelHandlerContext ctx, RemotingCommand remotingCommand, ByteBuf out) throws Exception {
+    protected void encode(final ChannelHandlerContext ctx, RemotingCommand remotingCommand, List<Object> list) throws Exception {
         try {
-            RemotingBuffer wrapper = new NettyRemotingBuffer(out);
+            ByteBuf out = Unpooled.buffer(0);
 
+            RemotingBuffer wrapper = new NettyRemotingBuffer(out);
             encode(remotingCommand, wrapper);
+
+            list.add(new BinaryWebSocketFrame(out));
         } catch (final RemotingCodecException e) {
             String remoteAddress = RemotingUtil.extractRemoteAddress(ctx.channel());
             LOG.error(String.format("Error occurred when encoding command for channel %s", remoteAddress), e);
@@ -57,6 +64,7 @@ public class Encoder extends MessageToByteEncoder<RemotingCommand> {
                     LOG.warn("Close channel {} because of error {}, result is {}", ctx.channel(), e, future.isSuccess());
                 }
             });
+
         }
     }
 

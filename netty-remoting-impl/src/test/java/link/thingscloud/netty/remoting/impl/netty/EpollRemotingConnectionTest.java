@@ -49,7 +49,7 @@ public class EpollRemotingConnectionTest extends BaseTest {
     private static RemotingServer remotingEpollServer;
     private static RemotingClient remotingEpollClient;
 
-    private static short requestCode = 123;
+    private static final short requestCode = 123;
     private RemotingCommand request;
 
     private static String remoteAddr;

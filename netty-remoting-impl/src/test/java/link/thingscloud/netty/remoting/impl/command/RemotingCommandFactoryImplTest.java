@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * @since 0.5.0
  */
 public class RemotingCommandFactoryImplTest {
-    private RemotingCommandFactory factory = new RemotingCommandFactoryImpl();
+    private final RemotingCommandFactory factory = new RemotingCommandFactoryImpl();
 
     @Test
     public void createRequest_Success() {

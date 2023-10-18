@@ -63,19 +63,16 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
         this.clientConfig = clientConfig;
 
         if (JvmUtils.isLinux() && this.clientConfig.isClientNativeEpollEnable()) {
-            this.ioGroup = new EpollEventLoopGroup(clientConfig.getClientIoThreads(), ThreadUtils.newGenericThreadFactory("NettyClientEpollIoThreads",
-                    clientConfig.getClientWorkerThreads()));
+            this.ioGroup = new EpollEventLoopGroup(clientConfig.getClientIoThreads(), ThreadUtils.newGenericThreadFactory("NettyClientEpollIoThreads", clientConfig.getClientWorkerThreads()));
             socketChannelClass = EpollSocketChannel.class;
         } else {
-            this.ioGroup = new NioEventLoopGroup(clientConfig.getClientIoThreads(), ThreadUtils.newGenericThreadFactory("NettyClientNioIoThreads",
-                    clientConfig.getClientWorkerThreads()));
+            this.ioGroup = new NioEventLoopGroup(clientConfig.getClientIoThreads(), ThreadUtils.newGenericThreadFactory("NettyClientNioIoThreads", clientConfig.getClientWorkerThreads()));
             socketChannelClass = NioSocketChannel.class;
         }
 
         this.clientChannelManager = new ClientChannelManager(clientBootstrap, clientConfig);
 
-        this.workerGroup = new DefaultEventExecutorGroup(clientConfig.getClientWorkerThreads(),
-                ThreadUtils.newGenericThreadFactory("NettyClientWorkerThreads", clientConfig.getClientWorkerThreads()));
+        this.workerGroup = new DefaultEventExecutorGroup(clientConfig.getClientWorkerThreads(), ThreadUtils.newGenericThreadFactory("NettyClientWorkerThreads", clientConfig.getClientWorkerThreads()));
     }
 
     @Override
@@ -89,8 +86,7 @@ public class NettyRemotingClient extends NettyRemotingAbstract implements Remoti
                         ch.pipeline().addLast(workerGroup,
                                 new Decoder(),
                                 new Encoder(),
-                                new IdleStateHandler(clientConfig.getConnectionChannelReaderIdleSeconds(),
-                                        clientConfig.getConnectionChannelWriterIdleSeconds(), clientConfig.getConnectionChannelIdleSeconds()),
+                                new IdleStateHandler(clientConfig.getConnectionChannelReaderIdleSeconds(), clientConfig.getConnectionChannelWriterIdleSeconds(), clientConfig.getConnectionChannelIdleSeconds()),
                                 new ClientConnectionHandler(),
                                 new RemotingCommandDispatcher());
                     }
