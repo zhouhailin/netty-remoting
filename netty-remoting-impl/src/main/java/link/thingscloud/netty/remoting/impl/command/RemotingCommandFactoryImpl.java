@@ -42,6 +42,7 @@ public class RemotingCommandFactoryImpl implements RemotingCommandFactory {
         response.cmdVersion(request.cmdVersion());
         response.requestID(request.requestID());
         response.trafficType(TrafficType.RESPONSE);
+        response.serializableType(request.serializableType());
         return response;
     }
 }
